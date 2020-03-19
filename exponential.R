@@ -39,26 +39,27 @@ myplot = ggplot(df, aes(x=day, y=diagnosed)) +
 
 ggsave("exponential.png",myplot)
 
-dfx = data.frame(day=1:(nrow(df)+5))
-dfx$diagnosed = predict(model.expon,list(day=1:(nrow(df)+5)))
+dfx = data.frame(day=0:(nrow(df)+6))
+dfx$diagnosed = predict(model.expon,list(day=dfx$day))
 dfx$date = df$date[1] + dfx$day
 glimpse(dfx)
 
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   geom_line(color="red",
             linewidth=6) +
-  ggtitle("COVID19-Infektionen in Dresden") +
+  ggtitle("COVID19-Infektionen in Dresden",
+          subtitle="https://github.com/psteinb/covid19-extrapol") +
   xlab("Tag") + ylab("Diagnostiziert") +
-  xlim(0,nrow(df)+6) +
+  xlim(0,nrow(df)+7) +
   geom_point(aes(
     x=day,
     y=diagnosed
   ),data=df) +
-  geom_label(data=dfx %>% filter(day>nrow(df)),
+  geom_label(data=dfx %>% filter(day>nrow(df)-1),
              aes(label=round(diagnosed)),
              hjust="outward"
              )+
-  geom_label(data=dfx %>% filter(day>nrow(df)),
+  geom_label(data=dfx %>% filter(day>nrow(df)-1),
              aes(label=date),
              hjust="inward"
              ) +
