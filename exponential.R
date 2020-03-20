@@ -89,25 +89,41 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
     x=day,
     y=diagnosed
   ),data=df) +
+
+  annotate("segment",
+           x = nrow(df)-2, xend = nrow(df),
+           y = dfx$diagnosed[nrow(df)+1], yend = dfx$diagnosed[nrow(df)+1],
+           colour = "red",
+           arrow = arrow(length = unit(2, "mm"))) +
+
   geom_label(data=dfx %>% filter(day == nrow(df)),
              aes(label=c(paste(dfx$date[nrow(df)],":",
-                               "(",round(lwr),"-",round(diagnosed),"-",round(upr),")"
+                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
                          )
                  ),
              hjust="inward",
-             nudge_x = -1
-             )+
+             nudge_x = -2
+             ) +
+
+  annotate("segment",
+           x = nrow(df)+6-2, xend = nrow(df)+6,
+           y = dfx$diagnosed[nrow(df)+7], yend = dfx$diagnosed[nrow(df)+7],
+           colour = "red",
+           arrow = arrow(length = unit(2, "mm")),
+           arrow.fill = "red"
+           )+
+
   geom_label(data=dfx %>% filter(day == nrow(df)+6),
              aes(label=c(paste(dfx$date[nrow(df)+6],":",
-                               "(",round(lwr),"-",round(diagnosed),"-",round(upr),")"
+                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
                          )
                  ),
              hjust="inward",
-             nudge_x = -1
+             nudge_x = -2
              )+
   ## geom_label(data=dfx %>% filter(day == nrow(df)),
   ##            aes(label=date),
