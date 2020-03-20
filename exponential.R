@@ -73,7 +73,7 @@ dfx$diagnosed = predict(model.expon,
 dfx$upr = upr.a*(1+upr.b)**(dfx$day)
 dfx$lwr = lwr.a*(1+lwr.b)**(dfx$day)
 
-dfx$date = df$date[1] + dfx$day
+dfx$date = df$date[1] + dfx$day + 1
 
 dfx
 
