@@ -12,8 +12,12 @@ Datenquelle: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/inf
 2. `tidyverse` installieren
 
 ``` r
-install.packages("tidyverse")
+> install.packages(c("ggplot2","dplyr","readr","optparse"))
 ```
+
 3. `exponential.R`-Script laufen lassen
 
+``` 
+$ Rscript exponential.R -i de_dresden.csv
+```
 
