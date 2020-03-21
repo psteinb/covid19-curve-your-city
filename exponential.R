@@ -84,7 +84,7 @@ dfx
 
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ggtitle("COVID19-Infektionen in Dresden",
-          subtitle="https://github.com/psteinb/covid19-curve-your-city") +
+          subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Tag der Aufzeichnung") + ylab("# Diagnostizierte Fälle") +
   xlim(0,nrow(df)+7) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
@@ -145,7 +145,7 @@ ggsave(paste("de",opts$output,sep="_"),myplot)
 
 en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ggtitle("COVID19 Infections in Dresden, Germany",
-          subtitle="https://github.com/psteinb/covid19-curve-your-city") +
+          subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Day of Record") + ylab("# Diagnosed Cases") +
   xlim(0,nrow(df)+7) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
