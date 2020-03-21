@@ -37,6 +37,8 @@ mytheme = theme_bw(base_size=20)##  + theme(
     ## plot.title=element_text(size=18,face="bold")
 ## )
 
+## THE MODEL TO FIT
+
 df = read.csv(opts$input)
 df$date = as.Date(df$date)
 df$day = as.integer(df$date - df$date[1])
@@ -52,18 +54,21 @@ upr.b = summary(model.expon)$coefficients[2,1] + summary(model.expon)$coefficien
 lwr.a = summary(model.expon)$coefficients[1,1] - summary(model.expon)$coefficients[1,2]
 lwr.b = summary(model.expon)$coefficients[2,1] - summary(model.expon)$coefficients[2,2]
 
-myplot = ggplot(df, aes(x=day, y=diagnosed)) +
-  geom_point() +
-  ggtitle("COVID19-Infectionen in Dresden") +
-  xlab("Tag") + ylab("Diagnostiziert") +
-  geom_line(aes(
-                y=fitted(model.expon)
-                ),
-            color="red",
-            linewidth=6) +
-  mytheme
+## myplot = ggplot(df, aes(x=day, y=diagnosed)) +
+##   geom_point() +
+##   ggtitle("COVID19-Infectionen in Dresden") +
+##   xlab("Tag") + ylab("Diagnostiziert") +
+##   geom_line(aes(
+##                 y=fitted(model.expon)
+##                 ),
+##             color="red",
+##             linewidth=6) +
+##   mytheme
 
-ggsave("exponential.png",myplot)
+## ggsave("exponential.png",myplot)
+
+##############
+## GERMAN PLOT
 
 dfx = data.frame(day=0:(nrow(df)+6))
 dfx$diagnosed = predict(model.expon,
@@ -79,8 +84,8 @@ dfx
 
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ggtitle("COVID19-Infektionen in Dresden",
-          subtitle="https://github.com/psteinb/covid19-extrapol") +
-  xlab("Tag") + ylab("Diagnostiziert") +
+          subtitle="https://github.com/psteinb/covid19-curve-your-city") +
+  xlab("Tag der Aufzeichnung") + ylab("# Diagnostizierte Fälle") +
   xlim(0,nrow(df)+7) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
   geom_line(color="red",
@@ -133,4 +138,65 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ##            ) +
   mytheme
 
-ggsave(opts$output,myplot)
+ggsave(paste("de",opts$output,sep="_"),myplot)
+
+###############q
+## ENGLISH PLOT
+
+en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
+  ggtitle("COVID19 Infections in Dresden, Germany",
+          subtitle="https://github.com/psteinb/covid19-curve-your-city") +
+  xlab("Day of Record") + ylab("# Diagnosed Cases") +
+  xlim(0,nrow(df)+7) +
+  geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
+  geom_line(color="red",
+            linewidth=6) +
+  geom_point(aes(
+    x=day,
+    y=diagnosed
+  ),data=df) +
+
+  annotate("segment",
+           x = nrow(df)-2, xend = nrow(df),
+           y = dfx$diagnosed[nrow(df)+1], yend = dfx$diagnosed[nrow(df)+1],
+           colour = "red",
+           arrow = arrow(length = unit(2, "mm"))) +
+
+  geom_label(data=dfx %>% filter(day == nrow(df)),
+             aes(label=c(paste(dfx$date[nrow(df)],":",
+                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
+
+                               )
+                         )
+                 ),
+             hjust="inward",
+             nudge_x = -2
+             ) +
+
+  annotate("segment",
+           x = nrow(df)+6-2, xend = nrow(df)+6,
+           y = dfx$diagnosed[nrow(df)+7], yend = dfx$diagnosed[nrow(df)+7],
+           colour = "red",
+           arrow = arrow(length = unit(2, "mm")),
+           arrow.fill = "red"
+           )+
+
+  geom_label(data=dfx %>% filter(day == nrow(df)+6),
+             aes(label=c(paste(dfx$date[nrow(df)+6],":",
+                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
+
+                               )
+                         )
+                 ),
+             hjust="inward",
+             nudge_x = -2
+             )+
+  ## geom_label(data=dfx %>% filter(day == nrow(df)),
+  ##            aes(label=date),
+  ##            hjust="inward",
+  ##            nudge_x = -10,
+  ##            nudge_y = .5
+  ##            ) +
+  mytheme
+
+ggsave(paste("en",opts$output,sep="_"),en_myplot)
