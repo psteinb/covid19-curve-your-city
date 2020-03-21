@@ -21,13 +21,14 @@ data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/inf
 1. [R installieren](https://www.r-project.org)
 2. Abhängigkeiten installieren
 
-``` r
+``` shell
+$ R
 > install.packages(c("ggplot2","dplyr","readr","optparse"))
 ```
 
 3. `exponential.R`-Script laufen lassen
 
-``` 
+``` shell
 $ Rscript exponential.R -i de_dresden.csv
 ```
 
@@ -38,13 +39,14 @@ $ Rscript exponential.R -i de_dresden.csv
 1. [install R](https://www.r-project.org)
 2. install dependencies
 
-``` r
+``` shell
+$ R
 > install.packages(c("ggplot2","dplyr","readr","optparse"))
 ```
 
 3. run `exponential.R` script
 
-``` 
+``` shell
 $ Rscript exponential.R -i de_dresden.csv
 ```
 
