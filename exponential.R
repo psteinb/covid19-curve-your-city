@@ -53,23 +53,12 @@ model.expon = nls(diagnosed ~ a*(1+b)**(day),
                   start = list(a = 1, b = 0.33)
                   )
 summary(model.expon)
+
+## creating the error bands
 upr.a = summary(model.expon)$coefficients[1,1] + summary(model.expon)$coefficients[1,2]
 upr.b = summary(model.expon)$coefficients[2,1] + summary(model.expon)$coefficients[2,2]
 lwr.a = summary(model.expon)$coefficients[1,1] - summary(model.expon)$coefficients[1,2]
 lwr.b = summary(model.expon)$coefficients[2,1] - summary(model.expon)$coefficients[2,2]
-
-## myplot = ggplot(df, aes(x=day, y=diagnosed)) +
-##   geom_point() +
-##   ggtitle("COVID19-Infectionen in Dresden") +
-##   xlab("Tag") + ylab("Diagnostiziert") +
-##   geom_line(aes(
-##                 y=fitted(model.expon)
-##                 ),
-##             color="red",
-##             linewidth=6) +
-##   mytheme
-
-## ggsave("exponential.png",myplot)
 
 ##############
 ## GERMAN PLOT
