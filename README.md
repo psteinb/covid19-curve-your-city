@@ -23,7 +23,7 @@ data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/inf
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot"))
 ```
 
 3. `exponential.R`-Script laufen lassen
@@ -41,7 +41,7 @@ $ Rscript exponential.R -i de_dresden.csv
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot"))
 ```
 
 3. run `exponential.R` script

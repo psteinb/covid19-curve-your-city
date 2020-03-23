@@ -2,7 +2,7 @@ library(ggplot2)
 library(dplyr, warn.conflicts=FALSE)
 library(readr)
 library(optparse)
-## library(nls2)
+library(cowplot)
 
 ## DEFINING COMMAND LINE INTERFACE
 parser <- OptionParser(## description='process COVID19 data'
@@ -15,7 +15,11 @@ option_list <- list(
               help='an csv file with COVID19 diagnosed cases [default %default]'),
   make_option(c('-o','--output'),
               default='plus5.png',
-              help='output file name of plot [default %default]')
+              help='output file name of plot [default %default]'),
+  make_option(c('-L','--logscale'),
+              action="store_true",
+              default=FALSE,
+              help='include a logscale plot in a second column [default %default]')
 )
 opts = parse_args(OptionParser(option_list=option_list))
 
@@ -138,7 +142,75 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ##            ) +
   mytheme
 
-ggsave(paste("de",opts$output,sep="_"),myplot)
+output_name = paste("de",opts$output,sep="_")
+
+if (!is.null(opts$logscale)){
+
+  print("plotting linear and log scale")
+
+  #remove title
+  myplot = myplot + theme(
+    plot.title = element_blank(),
+    plot.subtitle = element_blank()## ,
+    ## axis.title.x = element_blank(),
+    ## axis.title.y = element_blank()
+  )
+
+  logscaleplot = myplot
+  logscaleplot = logscaleplot +
+    scale_y_continuous(trans = "log10") +
+    theme(plot.title = element_blank(),
+          plot.subtitle = element_blank(),
+          axis.title.y = element_blank())
+
+  #put 2 plots into 1 horizontally row side-by-side
+  gridplots = plot_grid(myplot, logscaleplot,
+                        labels = c('linear', 'logarithmisch'),
+                        label_fontface = "plain",
+                        label_y = 1.03,
+                        label_x = c(.10,.0)+.4,
+                        ## hjust = -.1,
+                        label_size = 16)
+
+  # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
+  title <- ggdraw() +
+    draw_label(
+      "COVID19-Infektionen in Dresden",
+      size = 24,
+      x = 0,
+      hjust = 0
+    ) +
+    theme(
+      # add margin on the left of the drawing canvas,
+      # so title is aligned with left edge of first plot
+      plot.margin = margin(0, 0, 0, 7)
+    )
+
+  subtitle <- ggdraw() +
+    draw_label(
+      "github.com/psteinb/covid19-curve-your-city",
+      size = 16,
+      x = .5## ,
+      ## hjust = -1
+    ) +
+    theme(
+      # add margin on the left of the drawing canvas,
+      # so title is aligned with left edge of first plot
+      plot.margin = margin(0, 0, 0, 7)
+    )
+
+  mycanvas = plot_grid(
+    title, gridplots, subtitle,
+    ncol = 1,
+    # rel_heights values control vertical title margins
+    rel_heights = c(0.12, 1, .075)
+  )
+
+  ggsave(output_name,mycanvas, width = 12, height = 6.5)
+} else {
+  ggsave(output_name,myplot)
+}
+
 
 ###############q
 ## ENGLISH PLOT
