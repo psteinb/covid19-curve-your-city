@@ -24,5 +24,3 @@ RKI_COVID19_Dresden.csv: RKI_COVID19.csv
 
 echo :
 	@echo ${HTML_FILES}
-# %.csv : %.log
-# 	awk -vFS=',' '{printf "%s,%s,%s,", $1,$2,$3;$1=$2=$3=""; gsub(/^[ \t]+/,"",$0); print $0}' $< > $@
