@@ -1,0 +1,19 @@
+---
+title: "fill gaps in RKI data"
+output:
+    html_document:
+        toc: true
+        toc_float: true
+        theme: cosmo
+        highlight: tango
+---
+
+```{r load_libs, echo=FALSE}
+library(dplyr, warn.conflicts=FALSE)
+library(tidyr)
+#library(lubridate, warn.conflicts=FALSE)
+library(readr)
+
+df = data.frame("RKI_COVID19_Dresden.csv")
+```
+
