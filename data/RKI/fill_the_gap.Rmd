@@ -32,7 +32,7 @@ glimpse(df %>% filter(Altersgruppe == "A60-A79"))
 
 # fill the gaps
 
-```{r summ_data, echo=FALSE}
+```{r distill_data, echo=FALSE}
 
 cat("Sum of all cases listed by RKI:",sum(df$AnzahlFall))
 

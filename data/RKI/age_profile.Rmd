@@ -1,0 +1,69 @@
+---
+title: "Age Profile of deaths from RKI data"
+output:
+    html_document:
+        toc: true
+        toc_float: true
+        theme: cosmo
+        highlight: tango
+output_options: "self_contained"
+---
+
+# Loading the dataset
+
+```{r load_data, echo=FALSE}
+library(dplyr, warn.conflicts=FALSE)
+library(tidyr)
+library(lubridate, warn.conflicts=FALSE)
+library(readr)
+
+df = read.csv("RKI_COVID19.csv")
+levels(df$Altersgruppe)
+head(df %>% filter(Altersgruppe == "A60-A79"))
+
+df$Meldedatum = ymd_hms(df$Meldedatum)
+df$Meldedatum_Epoch_days = as.numeric(df$Meldedatum)
+df$Meldedatum_Epoch = as.numeric(as.POSIXct(df$Meldedatum,origin="1970-01-01",tz="CET"))
+
+df$Datenstand = dmy_hm(df$Datenstand)
+
+#construct deaths dataset
+ddf = df %>% filter(NeuerTodesfall > 0)
+
+glimpse(ddf)
+```
+
+# plot deaths per age group
+
+```{r prep, echo=FALSE, fig.width=10}
+library(ggplot2)
+
+mytheme = theme_bw(base_size=20)##  + theme(
+    ## ##text = element_text(family = "Decima WE", color = "grey20"),
+    ## ## strip.background = element_blank(),
+    ## ## strip.text = element_text(hjust = 0),
+    ## ## panel.grid.major = element_line(colour="grey50",size=0.35),
+    ## ## panel.grid.minor = element_blank(),
+    ## ## plot.margin=unit(c(0,1,0,1),"cm"),
+    ## legend.position="top",
+    ## plot.caption=element_text(hjust=1,size=14,colour="grey30"),
+    ## plot.subtitle=element_text(face="italic",size=14,colour="grey40"),
+    ## plot.title=element_text(size=18,face="bold")
+## )
+
+cddf = ddf %>% group_by(Altersgruppe, .drop= FALSE) %>% summarize(Anzahl = n()) %>% select(Altersgruppe,Anzahl)
+glimpse(cddf)
+```
+
+```{r mortality, echo=FALSE, fig.width=10}
+
+mortality = ggplot(cddf,aes(x=Altersgruppe,y=Anzahl)) + 
+geom_col() + 
+ylab("Zahl der Toten") + 
+ggtitle("Anzahl der COVID19-Toten in Deutschland") +
+geom_text(aes(label=Anzahl),nudge_y = 1, size=8) +
+ylim(0,1.2*max(cddf$Anzahl)) + 
+mytheme
+
+mortality
+```
