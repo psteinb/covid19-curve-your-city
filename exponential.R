@@ -3,6 +3,7 @@ library(dplyr, warn.conflicts=FALSE)
 library(readr)
 library(optparse)
 library(cowplot)
+library(nls2)
 
 ## DEFINING COMMAND LINE INTERFACE
 parser <- OptionParser(## description='process COVID19 data'
@@ -51,16 +52,40 @@ df$date = as.Date(df$date)
 df$day = as.integer(df$date - df$date[1])
 glimpse(df)
 
-print("nls: diagnosed ~ a*(1+b)**(day)")
+print(">>nls<<: diagnosed ~ a*(1+b)**(day)")
 model.expon = nls(diagnosed ~ a*(1+b)**(day),
                   data=df,
                   start = list(a = 1, b = 0.33)
                   )
 summary(model.expon)
 
-print("lm:  log(diagnosed) ~ day")
-model.kday = lm(log(df$diagnosed) ~ I(df$day))
-summary(model.kday)
+#based on http://rocs.hu-berlin.de/corona/docs/forecast/model/
+#a: is the reproduction rate of the process which quantifies how many of
+#   the potential susceptible-infectious contacts lead to new infections per day.
+#b: quantifying the number of infected people that cease to take part
+#   in the transmission process per day.
+
+#should be log(I_0) + ((a-b)*day
+model.lsir = lm(log(diagnosed) ~ day,df)
+lsir_sum = summary(model.lsir)
+lsir_sum
+
+I0.start = exp(lsir_sum$coefficients[1,1])
+slope = lsir_sum$coefficients[2,1]
+start = list(a = slope-.25, b = .25,I0 = I0.start)
+start <- expand.grid(I0 = seq(0, 10, len = 10),
+                     b = seq(0, 1, len = 20),
+                     a = seq(0, 1, len = 20))
+
+print(">>nls<<: diagnosed ~ I_0*exp((a-b)*day)")
+
+model.sir = nls2(diagnosed ~ I0*exp((a-b)*day),
+                data=df,
+                start = start,
+                algorithm = "random-search"
+                )
+summary(model.sir)
+
 
 ## creating the error bands
 upr.a = summary(model.expon)$coefficients[1,1] + summary(model.expon)$coefficients[1,2]
