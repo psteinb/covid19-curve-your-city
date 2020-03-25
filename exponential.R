@@ -16,6 +16,9 @@ option_list <- list(
   make_option(c('-o','--output'),
               default='plus5.png',
               help='output file name of plot [default %default]'),
+  make_option(c('-T','--titleextra'),
+              default='',
+              help='add this to the title [default %default]'),
   make_option(c('-L','--logscale'),
               action="store_true",
               default=FALSE,
@@ -48,11 +51,16 @@ df$date = as.Date(df$date)
 df$day = as.integer(df$date - df$date[1])
 glimpse(df)
 
+print("nls: diagnosed ~ a*(1+b)**(day)")
 model.expon = nls(diagnosed ~ a*(1+b)**(day),
                   data=df,
                   start = list(a = 1, b = 0.33)
                   )
 summary(model.expon)
+
+print("lm:  log(diagnosed) ~ day")
+model.kday = lm(log(df$diagnosed) ~ I(df$day))
+summary(model.kday)
 
 ## creating the error bands
 upr.a = summary(model.expon)$coefficients[1,1] + summary(model.expon)$coefficients[1,2]
@@ -76,7 +84,7 @@ dfx$date = df$date[1] + dfx$day + 1
 dfx
 
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
-  ggtitle("COVID19-Infektionen in Dresden",
+  ggtitle(paste("COVID19-Infektionen in Dresden",opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Tag der Aufzeichnung") + ylab("# Diagnostizierte Fälle") +
   xlim(0,nrow(df)+7) +
@@ -165,7 +173,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      "COVID19-Infektionen in Dresden",
+      paste("COVID19-Infektionen in Dresden",opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
@@ -206,7 +214,7 @@ if (!is.null(opts$logscale)){
 ## ENGLISH PLOT
 
 en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
-  ggtitle("COVID19 Infections in Dresden, Germany",
+  ggtitle(paste("COVID19 Infections in Dresden, Germany",opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Day of Record") + ylab("# Diagnosed Cases") +
   xlim(0,nrow(df)+7) +
@@ -295,7 +303,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      "COVID19 Infections in Dresden, Germany",
+      paste("COVID19 Infections in Dresden, Germany",opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
