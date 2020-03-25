@@ -4,9 +4,9 @@ SRC_FILES=$(wildcard *Rmd)
 PDF_FILES=$(SRC_FILES:%.Rmd=%.pdf)
 HTML_FILES=$(SRC_FILES:%.Rmd=%.html)
 
-all : RKI_COVID19_Dresden.csv $(HTML_FILES) #$(PDF_FILES)
+all : rki_de_dresden.csv $(HTML_FILES) #$(PDF_FILES)
 
-%.html : %.Rmd
+%.html : %.Rmd RKI_COVID19_Dresden.csv
 		Rscript -e "rmarkdown::render('$<')"
 
 fullpage-report.pdf : %.Rmd
@@ -15,6 +15,8 @@ fullpage-report.pdf : %.Rmd
 
 %.pdf : %.html
 	node_modules/.bin/decktape -s 1920x1080 reveal $<\?fragments=true $@
+
+rki_de_dresden.csv : fill_the_gap.html
 
 clean :
 		rm -fv $(PDF_FILES) $(HTML_FILES)
