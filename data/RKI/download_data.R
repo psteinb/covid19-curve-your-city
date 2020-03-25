@@ -9,7 +9,7 @@ parser <- OptionParser(## description='process COVID19 data'
 )
 option_list <- list(
   make_option(c('-o','--output'),
-              default='RKI_COVID.csv',
+              default='RKI_COVID19.csv',
               help='output file RKI data [default %default]')#,
   ## make_option(c('-T','--titleextra'),
   ##             default='',
