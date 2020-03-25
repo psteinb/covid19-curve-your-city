@@ -54,28 +54,16 @@ head(df$Meldedatum_Epoch_days_rel)
 cumdf = df %>% 
 arrange(Meldedatum_Epoch_days_rel) %>% 
 mutate(laufendeSumme = cumsum(AnzahlFall)) %>%
-select(Meldedatum_Epoch_days_rel,laufendeSumme,AnzahlFall)
+select(Meldedatum,Meldedatum_Epoch_days_rel,laufendeSumme)
 
-print(cumdf)
-sum(cumdf$AnzahlFall)
+rkidf = cumdf %>% 
+group_by(Meldedatum_Epoch_days_rel) %>% 
+filter(laufendeSumme == max(laufendeSumme)) %>%
+mutate(city = "Dresden") %>% ungroup()
+
+sft = stamp_time("17:00")
+
+rkidf = rkidf  %>% mutate(date = Meldedatum,tod_hhmm=sft(Meldedatum),diagnosed = laufendeSumme)  %>% select(-Meldedatum_Epoch_days_rel, -laufendeSumme)
+write.csv(rkidf, "rki_de_dresden.csv")
 ```
 
-# reference test
-
-```{r test}
-df <- data.frame(id = rep(1:3, each = 5),
-                 hour = rep(1:5, 3),
-                 day = sample(15:29),
-                 value = sample(1:15))
-df
-
-print("group_by(day)")
-df %>% group_by(day) %>% mutate(csum = cumsum(value))
-
-print("arrange(day)")
-df %>% arrange(day) %>% mutate(csum = cumsum(value))
-
-print("group_by(id)")
-df %>% group_by(id) %>% mutate(csum = cumsum(value))
-
-```
