@@ -64,27 +64,12 @@ summary(model.expon)
 #   the potential susceptible-infectious contacts lead to new infections per day.
 #b: quantifying the number of infected people that cease to take part
 #   in the transmission process per day.
-
-#should be log(I_0) + ((a-b)*day
-model.lsir = lm(log(diagnosed) ~ day,df)
-lsir_sum = summary(model.lsir)
-lsir_sum
-
-I0.start = exp(lsir_sum$coefficients[1,1])
-slope = lsir_sum$coefficients[2,1]
-start = list(a = slope-.25, b = .25,I0 = I0.start)
-start <- expand.grid(I0 = seq(0, 10, len = 10),
-                     b = seq(0, 1, len = 20),
-                     a = seq(0, 1, len = 20))
-
-print(">>nls<<: diagnosed ~ I_0*exp((a-b)*day)")
-
-model.sir = nls2(diagnosed ~ I0*exp((a-b)*day),
-                data=df,
-                start = start,
-                algorithm = "random-search"
-                )
-summary(model.sir)
+print(">>nls<<: diagnosed ~ a*exp(b*day)")
+model.sired = nls(diagnosed ~ a*exp(b*day),
+                  data=df,
+                  start = list(a = 10, b = 0.33)
+                  )
+summary(model.sired)
 
 
 ## creating the error bands
@@ -92,6 +77,11 @@ upr.a = summary(model.expon)$coefficients[1,1] + summary(model.expon)$coefficien
 upr.b = summary(model.expon)$coefficients[2,1] + summary(model.expon)$coefficients[2,2]
 lwr.a = summary(model.expon)$coefficients[1,1] - summary(model.expon)$coefficients[1,2]
 lwr.b = summary(model.expon)$coefficients[2,1] - summary(model.expon)$coefficients[2,2]
+
+supr.a = summary(model.sired)$coefficients[1,1] + summary(model.sired)$coefficients[1,2]
+supr.b = summary(model.sired)$coefficients[2,1] + summary(model.sired)$coefficients[2,2]
+slwr.a = summary(model.sired)$coefficients[1,1] - summary(model.sired)$coefficients[1,2]
+slwr.b = summary(model.sired)$coefficients[2,1] - summary(model.sired)$coefficients[2,2]
 
 ##############
 ## GERMAN PLOT
@@ -101,8 +91,13 @@ dfx$diagnosed = predict(model.expon,
                         list(day=dfx$day),
                         se.fit = T)
 
+dfx$diagnosed_sir = predict(model.sired,
+                        list(day=dfx$day),
+                        se.fit = T)
+
 dfx$upr = upr.a*(1+upr.b)**(dfx$day)
 dfx$lwr = lwr.a*(1+lwr.b)**(dfx$day)
+
 
 dfx$date = df$date[1] + dfx$day + 1
 
@@ -119,8 +114,7 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   geom_point(aes(
     x=day,
     y=diagnosed
-  ),data=df) +
-
+  ),data=df)  +
   annotate("segment",
            x = nrow(df)-2, xend = nrow(df),
            y = dfx$diagnosed[nrow(df)+1], yend = dfx$diagnosed[nrow(df)+1],
