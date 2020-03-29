@@ -17,6 +17,12 @@ option_list <- list(
   make_option(c('-o','--output'),
               default='plus5.png',
               help='output file name of plot [default %default]'),
+  make_option(c('-d','--deLabel'),
+              default='Dresden',
+              help='the name of the region under investigation in German [default %default]'),
+  make_option(c('-e','--enLabel'),
+              default='Dresden, Germany',
+              help='the name of the region under investigation in English [default %default]'),
   make_option(c('-T','--titleextra'),
               default='',
               help='add this to the title [default %default]'),
@@ -104,7 +110,7 @@ dfx$date = df$date[1] + dfx$day + 1
 dfx
 
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
-  ggtitle(paste("COVID19-Infektionen in Dresden",opts$titleextra),
+  ggtitle(paste("Prognose der COVID19-Infektionen in", opts$deLabel, opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Tag der Aufzeichnung") + ylab("# Diagnostizierte Fälle") +
   xlim(0,nrow(df)+7) +
@@ -192,7 +198,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      paste("COVID19-Infektionen in Dresden",opts$titleextra),
+      paste("Prognose der COVID19-Infektionen in",opts$deLabel,opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
@@ -233,7 +239,7 @@ if (!is.null(opts$logscale)){
 ## ENGLISH PLOT
 
 en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
-  ggtitle(paste("COVID19 Infections in Dresden, Germany",opts$titleextra),
+  ggtitle(paste("Prognosis of COVID19 Infections in",opts$enLabel,opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Day of Record") + ylab("# Diagnosed Cases") +
   xlim(0,nrow(df)+7) +
@@ -322,7 +328,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      paste("COVID19 Infections in Dresden, Germany",opts$titleextra),
+      paste("Prognosis of COVID19 Infections in",opts$enLabel,opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
