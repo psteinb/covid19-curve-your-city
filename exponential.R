@@ -3,6 +3,7 @@ library(dplyr, warn.conflicts=FALSE)
 library(readr)
 library(optparse)
 library(cowplot)
+library(lubridate)
 library(nls2)
 
 ## DEFINING COMMAND LINE INTERFACE
@@ -91,8 +92,10 @@ slwr.b = summary(model.sired)$coefficients[2,1] - summary(model.sired)$coefficie
 
 ##############
 ## GERMAN PLOT
+offset_1d = 1
+offset_1w = 7
 
-dfx = data.frame(day=0:(nrow(df)+6))
+dfx = data.frame(day=0:(nrow(df)+7))
 dfx$diagnosed = predict(model.expon,
                         list(day=dfx$day),
                         se.fit = T)
@@ -109,6 +112,15 @@ dfx$date = df$date[1] + dfx$day + 1
 
 dfx
 
+print("tomorrow")
+td = today()
+tmr = dfx %>% filter(day == nrow(df)-1)
+tmr
+
+print("1 week from now")
+onew = dfx %>% filter(day == nrow(df)-1+offset_1w)
+onew
+
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ggtitle(paste("Prognose der COVID19-Infektionen in", opts$deLabel, opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
@@ -121,14 +133,16 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
     x=day,
     y=diagnosed
   ),data=df)  +
+  ############### LABEL TOMORROW ################
   annotate("segment",
-           x = nrow(df)-2, xend = nrow(df),
-           y = dfx$diagnosed[nrow(df)+1], yend = dfx$diagnosed[nrow(df)+1],
+           x = tmr$day[1]-3, xend = tmr$day[1],
+           y = tmr$diagnosed[1],
+           yend = tmr$diagnosed[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm"))) +
 
-  geom_label(data=dfx %>% filter(day == nrow(df)),
-             aes(label=c(paste(dfx$date[nrow(df)],":",
+  geom_label(data=tmr,
+             aes(label=c(paste(date,":",
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
@@ -138,16 +152,17 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
              nudge_x = -2
              ) +
 
+  ############### LABEL 1 WEEK FROM NOW ################
   annotate("segment",
-           x = nrow(df)+6-2, xend = nrow(df)+6,
+           x = nrow(df)+7-2, xend = nrow(df)+7,
            y = dfx$diagnosed[nrow(df)+7], yend = dfx$diagnosed[nrow(df)+7],
            colour = "red",
            arrow = arrow(length = unit(2, "mm")),
            arrow.fill = "red"
            )+
 
-  geom_label(data=dfx %>% filter(day == nrow(df)+6),
-             aes(label=c(paste(dfx$date[nrow(df)+6],":",
+  geom_label(data=dfx %>% filter(day == nrow(df)+7),
+             aes(label=c(paste(dfx$date[nrow(df)+7],":",
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
@@ -269,15 +284,15 @@ en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
              ) +
 
   annotate("segment",
-           x = nrow(df)+6-2, xend = nrow(df)+6,
+           x = nrow(df)+7-2, xend = nrow(df)+7,
            y = dfx$diagnosed[nrow(df)+7], yend = dfx$diagnosed[nrow(df)+7],
            colour = "red",
            arrow = arrow(length = unit(2, "mm")),
            arrow.fill = "red"
            )+
 
-  geom_label(data=dfx %>% filter(day == nrow(df)+6),
-             aes(label=c(paste(dfx$date[nrow(df)+6],":",
+  geom_label(data=dfx %>% filter(day == nrow(df)+7),
+             aes(label=c(paste(dfx$date[nrow(df)+7],":",
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
