@@ -16,7 +16,7 @@ option_list <- list(
               default="de_dresden.csv",
               help='an csv file with COVID19 diagnosed cases [default %default]'),
   make_option(c('-o','--output'),
-              default='plus5.png',
+              default='plus7.png',
               help='output file name of plot [default %default]'),
   make_option(c('-d','--deLabel'),
               default='Dresden',
@@ -121,6 +121,7 @@ print("1 week from now")
 onew = dfx %>% filter(day == (df$day[nrow(df)]+offset_1w))
 onew
 
+
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ggtitle(paste("Prognose der COVID19-Diagnosen in", opts$deLabel, opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
@@ -142,7 +143,7 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
            arrow = arrow(length = unit(2, "mm"))) +
 
   geom_label(data=tmr,
-             aes(label=c(paste(date,":",
+             aes(label=c(paste(paste(day(date),month(date),":",sep="."),
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
@@ -163,7 +164,7 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
            )+
 
   geom_label(data=onew,
-             aes(label=c(paste(date,":",
+             aes(label=c(paste(paste(day(date),month(date),":",sep="."),
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
@@ -172,12 +173,7 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
              hjust="inward",
              nudge_x = -2
              )+
-  ## geom_label(data=dfx %>% filter(day == nrow(df)),
-  ##            aes(label=date),
-  ##            hjust="inward",
-  ##            nudge_x = -10,
-  ##            nudge_y = .5
-  ##            ) +
+  ### THEME
   mytheme
 
 output_name = paste("de",opts$output,sep="_")
@@ -258,7 +254,7 @@ en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ggtitle(paste("Prognosis of COVID19 diagnoses in",opts$enLabel,opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Day of Record") + ylab("# Diagnosed Cases") +
-  xlim(0,nrow(df)+7) +
+  xlim(0,onew$day) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
   geom_line(color="red",
             linewidth=6) +
@@ -266,34 +262,37 @@ en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
     x=day,
     y=diagnosed
   ),data=df) +
-
+  ############### LABEL TOMORROW ################
   annotate("segment",
-           x = nrow(df)-2, xend = nrow(df),
-           y = dfx$diagnosed[nrow(df)+1], yend = dfx$diagnosed[nrow(df)+1],
+           x = tmr$day[1]-3, xend = tmr$day[1],
+           y = tmr$diagnosed[1],
+           yend = tmr$diagnosed[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm"))) +
 
-  geom_label(data=dfx %>% filter(day == nrow(df)),
-             aes(label=c(paste(dfx$date[nrow(df)],":",
+  geom_label(data=tmr,
+             aes(label=c(paste(paste(month(date),"/",day(date),":",sep=""),
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
                          )
                  ),
              hjust="inward",
-             nudge_x = -2
+             nudge_x = -3
              ) +
 
+  ############### LABEL 1 WEEK FROM NOW ################
   annotate("segment",
-           x = nrow(df)+7-2, xend = nrow(df)+7,
-           y = dfx$diagnosed[nrow(df)+7], yend = dfx$diagnosed[nrow(df)+7],
+           x = onew$day[1]-5, xend = onew$day[1],
+           y = onew$diagnosed[1],
+           yend = onew$diagnosed[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm")),
            arrow.fill = "red"
            )+
 
-  geom_label(data=dfx %>% filter(day == nrow(df)+7),
-             aes(label=c(paste(dfx$date[nrow(df)+7],":",
+  geom_label(data=onew,
+             aes(label=c(paste(paste(month(date),"/",day(date),":",sep=""),
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
@@ -302,12 +301,7 @@ en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
              hjust="inward",
              nudge_x = -2
              )+
-  ## geom_label(data=dfx %>% filter(day == nrow(df)),
-  ##            aes(label=date),
-  ##            hjust="inward",
-  ##            nudge_x = -10,
-  ##            nudge_y = .5
-  ##            ) +
+  ### THEME
   mytheme
 
 output_name = paste("en",opts$output,sep="_")

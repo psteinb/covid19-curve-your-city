@@ -4,13 +4,13 @@
 
 ### Deutsch 
 
-![](de_plus5.png)
+![](de_plus7.png)
 
 Datenquelle: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
 
 ### English
 
-![](en_plus5.png)
+![](en_plus7.png)
 
 data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
 
@@ -32,7 +32,7 @@ $ R
 $ Rscript exponential.R -i de_dresden.csv
 ```
 
-4. Dies produziert zwei Dateien `de_plus5.png` und `en_plus5.png`.
+4. Dies produziert zwei Dateien `de_plus7.png` und `en_plus7.png`.
 
 ## English
 
@@ -50,4 +50,4 @@ $ R
 $ Rscript exponential.R -i de_dresden.csv
 ```
 
-4. this produces 2 files: `de_plus5.png` and `en_plus5.png` that contain the plots based on `de_dresden.csv`
+4. this produces 2 files: `de_plus7.png` and `en_plus7.png` that contain the plots based on `de_dresden.csv`
