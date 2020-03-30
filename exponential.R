@@ -57,7 +57,7 @@ mytheme = theme_bw(base_size=20)##  + theme(
 df = read.csv(opts$input)
 df$date = as.Date(df$date)
 df$day = as.integer(df$date - df$date[1])
-glimpse(df)
+df
 
 print(">>nls<<: diagnosed ~ a*(1+b)**(day)")
 model.expon = nls(diagnosed ~ a*(1+b)**(day),
@@ -95,7 +95,7 @@ slwr.b = summary(model.sired)$coefficients[2,1] - summary(model.sired)$coefficie
 offset_1d = 1
 offset_1w = 7
 
-dfx = data.frame(day=0:(nrow(df)+7))
+dfx = data.frame(day=0:(nrow(df)+offset_1w))
 dfx$diagnosed = predict(model.expon,
                         list(day=dfx$day),
                         se.fit = T)
@@ -108,24 +108,24 @@ dfx$upr = upr.a*(1+upr.b)**(dfx$day)
 dfx$lwr = lwr.a*(1+lwr.b)**(dfx$day)
 
 
-dfx$date = df$date[1] + dfx$day + 1
+dfx$date = df$date[1] + dfx$day
 
 dfx
 
 print("tomorrow")
 td = today()
-tmr = dfx %>% filter(day == nrow(df)-1)
+tmr = dfx %>% filter(day == nrow(df))
 tmr
 
 print("1 week from now")
-onew = dfx %>% filter(day == nrow(df)-1+offset_1w)
+onew = dfx %>% filter(day == (df$day[nrow(df)]+offset_1w))
 onew
 
 myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
-  ggtitle(paste("Prognose der COVID19-Infektionen in", opts$deLabel, opts$titleextra),
+  ggtitle(paste("Prognose der COVID19-Diagnosen in", opts$deLabel, opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Tag der Aufzeichnung") + ylab("# Diagnostizierte Fälle") +
-  xlim(0,nrow(df)+7) +
+  xlim(0,onew$day[1]) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
   geom_line(color="red",
             linewidth=6) +
@@ -149,20 +149,21 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
                          )
                  ),
              hjust="inward",
-             nudge_x = -2
+             nudge_x = -3
              ) +
 
   ############### LABEL 1 WEEK FROM NOW ################
   annotate("segment",
-           x = nrow(df)+7-2, xend = nrow(df)+7,
-           y = dfx$diagnosed[nrow(df)+7], yend = dfx$diagnosed[nrow(df)+7],
+           x = onew$day[1]-5, xend = onew$day[1],
+           y = onew$diagnosed[1],
+           yend = onew$diagnosed[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm")),
            arrow.fill = "red"
            )+
 
-  geom_label(data=dfx %>% filter(day == nrow(df)+7),
-             aes(label=c(paste(dfx$date[nrow(df)+7],":",
+  geom_label(data=onew,
+             aes(label=c(paste(date,":",
                                "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
 
                                )
@@ -213,7 +214,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      paste("Prognose der COVID19-Infektionen in",opts$deLabel,opts$titleextra),
+      paste("Prognose der COVID19-Diagnosen in",opts$deLabel,opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
@@ -254,7 +255,7 @@ if (!is.null(opts$logscale)){
 ## ENGLISH PLOT
 
 en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
-  ggtitle(paste("Prognosis of COVID19 Infections in",opts$enLabel,opts$titleextra),
+  ggtitle(paste("Prognosis of COVID19 diagnoses in",opts$enLabel,opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Day of Record") + ylab("# Diagnosed Cases") +
   xlim(0,nrow(df)+7) +
@@ -343,7 +344,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      paste("Prognosis of COVID19 Infections in",opts$enLabel,opts$titleextra),
+      paste("Prognosis of COVID19 diagnoses in",opts$enLabel,opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
