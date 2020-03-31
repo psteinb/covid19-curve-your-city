@@ -20,7 +20,7 @@ data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/inf
 
 Für die rote Linie im o.g. Plot benutze ich ein sehr einfaches Modell: das [exponentiellen Wachstum](https://de.wikipedia.org/wiki/Exponentielles_Wachstum) der COVID19-Pandemie. Ich fitte die Daten mit einem [Least-Squares-Verfahren](https://de.wikipedia.org/wiki/Methode_der_kleinsten_Quadrate) entsprechend der Formel für das Modell:
 
-``` shell
+``` r
 diagnosed ~ a*exp(b*day)
 ```
 
@@ -30,7 +30,7 @@ Wobei `a` und `b` freie Parameter sind.
 
 For the red line in the plot above, I use a simple model: the [exponential growth](https://en.wikipedia.org/wiki/Exponential_growth) of the COVID19 pandemia. I fit the data using a [Least Squares Algorithm](https://en.wikipedia.org/wiki/Least_squares) using the formula of the model:
 
-``` shell
+``` r
 diagnosed ~ a*exp(b*day)
 ```
 
