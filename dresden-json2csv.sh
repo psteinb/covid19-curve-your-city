@@ -53,7 +53,7 @@ tf=$(printf "$fn"|rev|cut -d. -f2-|rev)".csv"
 test "$(printf "$fn\n"|rev|cut -d. -f1|rev)" = "json" && {
 
 # head line as found in csv of the repo
-1>"$tf" printf "city,date,tod_hhmm,diagnosed,deceased,recovered,hospitalized"
+1>"$tf" printf "city,date,tod_hhmm,diagnosed,deceased,recovered,hospitalized\n"
 # csv header as used in R script
 #~ 1>"$tf" printf "city,date,tod_hhmm,diagnosed"
 
