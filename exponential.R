@@ -377,16 +377,20 @@ if (!is.null(opts$logscale)){
 }
 
 ## For the statistics fans
+chi2 = sum(df$diagnosed_residuals**2)/sd(df$diagnosed_residuals)**2
+cat(">> ndf=", nrow(df) - 2 -1,"chi2:", chi2,"\n")
+chi2_ndf = chi2/(nrow(df) - 2 -1)
 
 resids = ggplot(df, aes(diagnosed_residuals)) +
   geom_histogram() +
   ggtitle("Residuals of the exponential fit",
-          subtitle = sprintf("mean: %2.2f, median: %2.2f, std: %2.2f",
+          subtitle = sprintf("mean: %2.2f, med: %2.2f, std: %2.2f, chi2/ndf: %2.3f",
                              mean(df$diagnosed_residuals),
                              median(df$diagnosed_residuals),
-                             sd(df$diagnosed_residuals)
+                             sd(df$diagnosed_residuals),
+                             chi2_ndf
                            )) +
   xlab("Residuals: X - predicted(X)") + ylab("N") +
   mytheme
 
-ggsave(paste("residuals",opts$output,sep="_"))
+ggsave(paste("residuals",opts$output,sep="_"), width=8,height=5)
