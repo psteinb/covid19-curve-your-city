@@ -6,7 +6,7 @@ name: Data Provider
 # events but only for the master branch
 on:
   schedule:
-    - cron:  '0 *15 * * *'
+    - cron:  '5 12 * * *'
 #  push:
 #    branches: [ master ]
 
