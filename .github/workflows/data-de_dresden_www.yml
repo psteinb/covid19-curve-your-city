@@ -27,18 +27,19 @@ jobs:
     - name: the shell script
       run: |
         fn="data/de_dresden_www.csv"
-        ls -la "$fn" || echo "err: "$?
-        cat "$fn" || echo "err: "$?
-        ./dresden-json2csv.sh
+        ls -la "$fn" || { e=$?; echo "err: $e"; }
+        cat "$fn" || { e=$?; echo "err: $e"; }
+        ./dresden-json2csv.sh || { e=$?; echo "err: $e"; }
 
     # Stores a resulting file for e.g. later download
-    - name: archive resulting csv file
-      uses: actions/upload-artifact@v1
-      with:
-          name: resulting csv file
-          path: data/de_dresden_www.csv
+#    - name: archive resulting csv file
+#      uses: actions/upload-artifact@v1
+#      with:
+#          name: resulting csv file
+#          path: data/de_dresden_www.csv
+
     # Runs a set of commands using the runners shell
-    - name: show file content 
+   - name: show file content 
       shell: sh
       run: |
         fn="data/de_dresden_www.csv"
@@ -48,24 +49,30 @@ jobs:
         echo "----X8----"
         printf "done.\n" 
 
-    - name: commit resulting file to repository 
-      shell: sh
-      run: |
-        printf "d: fn"
-        fn="data/de_dresden_www.csv"
-        printf " $fn\n"
-        printf "d: git config user.name ci-script\n"
-        git config user.name ci-script || echo "err: "$?
-        git config user.name
-        printf "d: git config user.email ci-script@users.noreply.github.com\n"
-        git config user.email ci-script@users.noreply.github.com || echo "err: "$?
-        git config user.email
-        printf "d: git add $fn\n"
-        ls -la "$fn"
-        git add "$fn" || { e=$?; echo "err: $e"; }
-        test "$e" -eq "1" && { echo "\e[1;34mError: no changes\e[0m"; }
-        ls -la "$fn"
-        printf "d: git commit $fn -m \"add result\"\n"
-        git commit "$fn" -m "add result" || echo "err: "$?
-        printf "d: git push origin master\n"
-        git push origin master || echo "err: "$?
+    - name: Add & Commit
+      uses: EndBug/add-and-commit@v4.0.1
+      with:
+        add: data/de_dresden_www.csv
+#        author_name: ci-script
+#        author_email: ci-script@users.noreply.github.com
+
+#    - name: commit resulting file to repository 
+#      shell: sh
+#      run: |
+#        printf "d: fn"
+#        fn="data/de_dresden_www.csv"
+#        printf " $fn\n"
+#        printf "d: git config user.name ci-script\n"
+#        git config user.name ci-script || { e=$?; echo "err: $e"; }
+#        git config user.name
+#        printf "d: git config user.email ci-script@users.noreply.github.com\n"
+#        git config user.email ci-script@users.noreply.github.com || { e=$?; echo "err: $e"; }
+#        git config user.email
+#        printf "d: git add $fn\n"
+#        git add "$fn" || { e=$?; echo "err: $e"; }
+#        printf "d: test \$e ($e) for value 1\n"
+#        if test "$e" -eq "1"; then printf "%b" "\e[1;34mError: no changes\e[0m"; fi
+#        printf "d: git commit $fn -m \"add result\"\n"
+#        git commit "$fn" -m "add result" || { e=$?; echo "err: $e"; }
+#        printf "d: git push origin master\n"
+#        git push origin master || { e=$?; echo "err: $e"; }
