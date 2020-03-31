@@ -25,7 +25,11 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: the shell script
-      run: ./dresden-json2csv.sh
+      run: |
+        fn="data/de_dresden_www.csv"
+        ls -la "$fn"
+        cat "$fn"
+        ./dresden-json2csv.sh "$fn"
 
     # Stores a resulting file for e.g. later download
     - name: archive resulting csv file
@@ -47,9 +51,20 @@ jobs:
     - name: commit resulting file to repository 
       shell: sh
       run: |
+        printf "d: fn"
         fn="data/de_dresden_www.csv"
+        printf " $fn\n"
+        printf "d: git config user.name ci-script\n"
         git config user.name ci-script || echo "err: "$?
+        git config user.name
+        printf "d: git config user.email ci-script@users.noreply.github.com\n"
         git config user.email ci-script@users.noreply.github.com || echo "err: "$?
+        git config user.email
+        printf "d: git add $fn\n"
+        ls -la "$fn"
         git add "$fn" || echo "err: "$?
+        ls -la "$fn"
+        printf "d: git commit $fn -m \"add result\"\n"
         git commit "$fn" -m "add result" || echo "err: "$?
+        printf "d: git push origin master\n"
         git push origin master || echo "err: "$?
