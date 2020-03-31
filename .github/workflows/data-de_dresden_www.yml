@@ -25,7 +25,7 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: the shell script
-      run: ./dresden-json2csv.sh data.config
+      run: ./dresden-json2csv.sh
 
     # Stores a resulting file for e.g. later download
     - name: archive resulting csv file
