@@ -7,8 +7,8 @@ name: Test Git self-Commit
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+#  pull_request:
+#    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -37,3 +37,4 @@ jobs:
         git config user.email ci-script@users.noreply.github.com
         git add test.o
         git commit test.o -m "add o-file"
+        git push origin master
