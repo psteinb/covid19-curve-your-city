@@ -7,8 +7,8 @@ name: Data Provider
 on:
   schedule:
     - cron:  '5 12 * * *'
-#  push:
-#    branches: [ master ]
+  push:
+    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
