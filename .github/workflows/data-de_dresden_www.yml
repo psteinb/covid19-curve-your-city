@@ -48,8 +48,8 @@ jobs:
       shell: sh
       run: |
         fn="data/de_dresden_www.csv"
-        git config user.name ci-script
-        git config user.email ci-script@users.noreply.github.com
-        git add "$fn"
-        git commit "$fn" -m "add o-file"
-        git push origin master
+        git config user.name ci-script || echo "err: "$?
+        git config user.email ci-script@users.noreply.github.com || echo "err: "$?
+        git add "$fn" || echo "err: "$?
+        git commit "$fn" -m "add result" || echo "err: "$?
+        git push origin master || echo "err: "$?
