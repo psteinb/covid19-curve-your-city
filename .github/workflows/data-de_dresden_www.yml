@@ -62,7 +62,8 @@ jobs:
         git config user.email
         printf "d: git add $fn\n"
         ls -la "$fn"
-        git add "$fn" || echo "err: "$?
+        git add "$fn" || { e=$?; echo "err: $e"; }
+        test "$e" -eq "1" && { echo "\e[1;34mError: no changes\e[0m"; }
         ls -la "$fn"
         printf "d: git commit $fn -m \"add result\"\n"
         git commit "$fn" -m "add result" || echo "err: "$?
