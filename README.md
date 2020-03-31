@@ -83,3 +83,5 @@ My fit uses a simple exponential function. It is important to have a look at the
 ![](residuals_plus7.png)
 
 The `nls` fit that I use, assumes that the data follows a Gaussian around the predicted values. The above plot looks like a very wide spread Gaussian. On top, there is a strong tendency towards positive values.
+
+The plot above lists a parameter by the name `chi2/ndf`, if this is close to `1`, then the fit can be considered good. For more details, see the [wikipedia page on errors and residuals](https://en.wikipedia.org/wiki/Errors_and_residuals).
