@@ -27,8 +27,8 @@ jobs:
     - name: the shell script
       run: |
         fn="data/de_dresden_www.csv"
-        ls -la "$fn"
-        cat "$fn"
+        ls -la "$fn" || echo "err: "$?
+        cat "$fn" || echo "err: "$?
         ./dresden-json2csv.sh
 
     # Stores a resulting file for e.g. later download
