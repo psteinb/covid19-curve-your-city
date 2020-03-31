@@ -16,7 +16,7 @@ dependencies="printf cat cut rev test date sleep curl jq"
 assert_tools $dependencies
 
 # for calling existing file, fallback test case
-test -z $1 && fn="g.json" || fn="$1"
+test -z $1 && fn="data/de_dresden_www.json" || fn="$1"
 # could test for existing file
 
 # disable query new file with cli option
@@ -43,7 +43,10 @@ curl -s -o "$fn" -k -A "$a" "$url2"
 1>&2 printf "Reading from: %s\n" "$fn"
 test -f "$fn" || { 1>&2 printf "file does not exist.\n"; exit 1; }
 # output file with ISO timestamp in filename
-tf=$(date '+%Y-%m-%dT%H:%M:%S')"_"$(printf "$fn"|rev|cut -d. -f2-|rev)".csv"
+ts='+%Y-%m-%dT%H:%M:%S'
+tf=$(printf "$fn"|rev|cut -d. -f2-|rev)".csv"
+# may or may not use timestamp as prefix
+#tf=$(date "$ts")"_$tf"
 1>&2 printf "Writing to: $tf\n"
 
 # check for file extension
