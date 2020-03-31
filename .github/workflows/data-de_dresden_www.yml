@@ -29,7 +29,7 @@ jobs:
         fn="data/de_dresden_www.csv"
         ls -la "$fn"
         cat "$fn"
-        ./dresden-json2csv.sh "$fn"
+        ./dresden-json2csv.sh
 
     # Stores a resulting file for e.g. later download
     - name: archive resulting csv file
