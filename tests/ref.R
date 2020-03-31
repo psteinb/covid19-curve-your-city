@@ -45,6 +45,9 @@ cat("our coef(fit):\n")
 coef(fit)
 # print the residuals
 cat("our residuals(fit):\n")
+
+# residuals are important
+# https://en.wikipedia.org/wiki/Errors_and_residuals
 residuals(fit)
 df$nyres = residuals(fit)
 df$nyf = fitted(fit)

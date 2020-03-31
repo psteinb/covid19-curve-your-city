@@ -100,6 +100,8 @@ dfx$diagnosed = predict(model.expon,
                         list(day=dfx$day),
                         se.fit = T)
 
+df$diagnosed_residuals = residuals(model.expon)
+
 dfx$diagnosed_sir = predict(model.sired,
                         list(day=dfx$day),
                         se.fit = T)
@@ -373,3 +375,18 @@ if (!is.null(opts$logscale)){
 } else {
   ggsave(output_name,en_myplot)
 }
+
+## For the statistics fans
+
+resids = ggplot(df, aes(diagnosed_residuals)) +
+  geom_histogram() +
+  ggtitle("Residuals of the exponential fit",
+          subtitle = sprintf("mean: %2.2f, median: %2.2f, std: %2.2f",
+                             mean(df$diagnosed_residuals),
+                             median(df$diagnosed_residuals),
+                             sd(df$diagnosed_residuals)
+                           )) +
+  xlab("Residuals: X - predicted(X)") + ylab("N") +
+  mytheme
+
+ggsave(paste("residuals",opts$output,sep="_"))
