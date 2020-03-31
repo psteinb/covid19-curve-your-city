@@ -1,4 +1,5 @@
-city,date,tod_hhmm,diagnosed,deceased,recovered,hospitalizedDresden,2020-03-07,12:00,2,0,0,0
+city,date,tod_hhmm,diagnosed,deceased,recovered,hospitalized
+Dresden,2020-03-07,12:00,2,0,0,0
 Dresden,2020-03-08,12:00,2,0,0,0
 Dresden,2020-03-09,12:00,2,0,0,0
 Dresden,2020-03-10,12:00,5,0,0,0
