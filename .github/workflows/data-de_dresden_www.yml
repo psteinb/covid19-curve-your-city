@@ -6,9 +6,10 @@ name: Data Provider
 # events but only for the master branch
 on:
   schedule:
-    - cron:  '5 12 * * *'
-  push:
+    - cron:  '42 12 * * *'
     branches: [ master ]
+#  push:
+#    branches: [ master ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
