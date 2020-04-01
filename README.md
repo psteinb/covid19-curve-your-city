@@ -2,17 +2,20 @@
 
 ## Dresden 
 
-### Deutsch 
+### COVID19-Diagnosen / Diagnoses
 
-![](de_plus7.png)
+![](de_plus7_diagnosed.png)
+![](en_plus7_diagnosed.png)
 
-Datenquelle: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
+Datenquelle/data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
 
-### English
+### COVID19 Im Krankenhaus / Hospitalized
 
-![](en_plus7.png)
+![](de_plus7_hospitalized.png)
+![](en_plus7_hospitalized.png)
 
-data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
+Datenquelle/data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
+
 
 ## Statistik
 
@@ -80,7 +83,8 @@ $ Rscript exponential.R -i de_dresden.csv
 
 My fit uses a simple exponential function. It is important to have a look at the residuals.
 
-![](residuals_plus7.png)
+![](residuals_plus7_diagnosed.png)
+![](residuals_plus7_hospitalized.png)
 
 The `nls` fit that I use, assumes that the data follows a Gaussian around the predicted values. The above plot looks like a very wide spread Gaussian. On top, there is a strong tendency towards positive values.
 
