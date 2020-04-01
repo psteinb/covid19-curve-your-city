@@ -3,12 +3,10 @@
 name: Data Provider
 
 # Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# schedule event for wee past 12 in Germany, so 10 UTC in summer time
 on:
   schedule:
-    - cron:  '5 12 * * *'
-  push:
-    branches: [ master ]
+    - cron: "10 10 * * *"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -21,11 +19,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@master
 
     # Runs a single command using the runners shell
     - name: the shell script
       run: |
+        date # tell us system time
         fn="data/de_dresden_www.csv"
         ls -la "$fn" || { e=$?; echo "err: $e"; }
         cat "$fn" || { e=$?; echo "err: $e"; }
