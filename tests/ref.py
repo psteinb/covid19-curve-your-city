@@ -19,6 +19,12 @@ def main():
     plt.plot(x, y, 'o', label='data',color="black")
 
     popt, pcov =  curve_fit(f, x, y)
+
+    # pcov is obtained
+    # from the Hessian matrix (inverted Jacobian) at the optimal parameters
+    # https://github.com/scipy/scipy/blob/v1.4.1/scipy/optimize/minpack.py#L763
+    # and then all values inside this matrix are multiplied by chi**2/ndf to give pcov
+    # https://github.com/scipy/scipy/blob/v1.4.1/scipy/optimize/minpack.py#L801
     perr = np.sqrt(np.diag(pcov))
     # print(popt)
     # print(perr)
