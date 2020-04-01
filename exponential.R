@@ -13,8 +13,9 @@ option_list <- list(
   make_option(c('-i','--input'),
               type="character",
               action="store",
-              default="de_dresden.csv",
+              default="data/de_dresden_www.csv",
               help='an csv file with COVID19 diagnosed cases [default %default]'),
+
   make_option(c('-o','--output'),
               default='plus7.png',
               help='output file name of plot [default %default]'),
@@ -26,12 +27,15 @@ option_list <- list(
   make_option(c('-d','--deLabel'),
               default='Dresden',
               help='the name of the region under investigation in German [default %default]'),
+
   make_option(c('-e','--enLabel'),
               default='Dresden, Germany',
               help='the name of the region under investigation in English [default %default]'),
+
   make_option(c('-T','--titleextra'),
-              default='',
+              default='[dresden.de]',
               help='add this to the title [default %default]'),
+
   make_option(c('-L','--logscale'),
               action="store_true",
               default=FALSE,
@@ -140,7 +144,7 @@ onew
 
 
 myplot = ggplot(dfx, aes(x=day, y=ydata)) +
-  ggtitle(paste("Prognose der COVID19-Diagnosen in", opts$deLabel, opts$titleextra),
+  ggtitle(paste("Prognose der COVID19-Fälle",opts$column,"in", opts$deLabel, opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Tag der Aufzeichnung") + ylab(paste("#",opts$column,"Fälle")) +
   xlim(0,onew$day[1]) +
@@ -227,7 +231,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      paste("Prognose der COVID19-Diagnosen in",opts$deLabel,opts$titleextra),
+      paste("Prognose der COVID19-Fälle",opts$column,"in",opts$deLabel,opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
@@ -268,7 +272,7 @@ if (!is.null(opts$logscale)){
 ## ENGLISH PLOT
 
 en_myplot = ggplot(dfx, aes(x=day, y=ydata)) +
-  ggtitle(paste("Prognosis of COVID19 diagnoses in",opts$enLabel,opts$titleextra),
+  ggtitle(paste("Prognosis of COVID19 cases",opts$column,"in",opts$enLabel,opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
   xlab("Day of Record") + ylab(paste("# of",opts$column,"Cases")) +
   xlim(0,onew$day) +
@@ -355,7 +359,7 @@ if (!is.null(opts$logscale)){
   # now add the title, see https://wilkelab.org/cowplot/articles/plot_grid.html
   title <- ggdraw() +
     draw_label(
-      paste("Prognosis of COVID19 diagnoses in",opts$enLabel,opts$titleextra),
+      paste("Prognosis of COVID19 cases",opts$column,"in",opts$enLabel,opts$titleextra),
       size = 24,
       x = 0,
       hjust = 0
