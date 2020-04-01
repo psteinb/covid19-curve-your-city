@@ -3,10 +3,10 @@
 name: Data Provider
 
 # Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# schedule event for wee past 12 in Germany, so 10 UTC in summer time
 on:
   schedule:
-    - cron: "*/5 * * * 3-4"
+    - cron: "10 10 * * *"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
