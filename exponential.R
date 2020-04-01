@@ -18,6 +18,11 @@ option_list <- list(
   make_option(c('-o','--output'),
               default='plus7.png',
               help='output file name of plot [default %default]'),
+
+  make_option(c('-c','--column'),
+              default='diagnosed',
+              help='column in .csv input to plot [default %default]'),
+
   make_option(c('-d','--deLabel'),
               default='Dresden',
               help='the name of the region under investigation in German [default %default]'),
@@ -55,12 +60,22 @@ mytheme = theme_bw(base_size=20)##  + theme(
 ## THE MODEL TO FIT
 
 df = read.csv(opts$input)
+
+colid = which( colnames(df)== opts$column )
+if (colid > 0){
+  df$ydata = df[,colid]
+} else {
+  stop(cat("column",opts$column,"not found in",
+           opts$input,"\navailable:",colnames(df)),
+       call.=FALSE)
+}
+
 df$date = as.Date(df$date)
 df$day = as.integer(df$date - df$date[1])
 df
 
-print(">>nls<<: diagnosed ~ a*(1+b)**(day)")
-model.expon = nls(diagnosed ~ a*(1+b)**(day),
+print(">>nls<<: ydata ~ a*(1+b)**(day)")
+model.expon = nls(ydata ~ a*(1+b)**(day),
                   data=df,
                   start = list(a = 1, b = 0.33)
                   )
@@ -71,8 +86,8 @@ summary(model.expon)
 #   the potential susceptible-infectious contacts lead to new infections per day.
 #b: quantifying the number of infected people that cease to take part
 #   in the transmission process per day.
-print(">>nls<<: diagnosed ~ a*exp(b*day)")
-model.sired = nls(diagnosed ~ a*exp(b*day),
+print(">>nls<<: ydata ~ a*exp(b*day)")
+model.sired = nls(ydata ~ a*exp(b*day),
                   data=df,
                   start = list(a = 10, b = 0.33)
                   )
@@ -96,13 +111,13 @@ offset_1d = 1
 offset_1w = 7
 
 dfx = data.frame(day=0:(nrow(df)+offset_1w))
-dfx$diagnosed = predict(model.expon,
+dfx$ydata = predict(model.expon,
                         list(day=dfx$day),
                         se.fit = T)
 
-df$diagnosed_residuals = residuals(model.expon)
+df$ydata_residuals = residuals(model.expon)
 
-dfx$diagnosed_sir = predict(model.sired,
+dfx$ydata_sir = predict(model.sired,
                         list(day=dfx$day),
                         se.fit = T)
 
@@ -124,29 +139,29 @@ onew = dfx %>% filter(day == (df$day[nrow(df)]+offset_1w))
 onew
 
 
-myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
+myplot = ggplot(dfx, aes(x=day, y=ydata)) +
   ggtitle(paste("Prognose der COVID19-Diagnosen in", opts$deLabel, opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
-  xlab("Tag der Aufzeichnung") + ylab("# Diagnostizierte Fälle") +
+  xlab("Tag der Aufzeichnung") + ylab(paste("#",opts$column,"Fälle")) +
   xlim(0,onew$day[1]) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
   geom_line(color="red",
             linewidth=6) +
   geom_point(aes(
     x=day,
-    y=diagnosed
+    y=ydata
   ),data=df)  +
   ############### LABEL TOMORROW ################
   annotate("segment",
            x = tmr$day[1]-3, xend = tmr$day[1],
-           y = tmr$diagnosed[1],
-           yend = tmr$diagnosed[1],
+           y = tmr$ydata[1],
+           yend = tmr$ydata[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm"))) +
 
   geom_label(data=tmr,
              aes(label=c(paste(paste(day(date),month(date),":",sep="."),
-                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
+                               "(",round(lwr),"<",round(ydata),"<",round(upr),")"
 
                                )
                          )
@@ -158,8 +173,8 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ############### LABEL 1 WEEK FROM NOW ################
   annotate("segment",
            x = onew$day[1]-5, xend = onew$day[1],
-           y = onew$diagnosed[1],
-           yend = onew$diagnosed[1],
+           y = onew$ydata[1],
+           yend = onew$ydata[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm")),
            arrow.fill = "red"
@@ -167,7 +182,7 @@ myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
 
   geom_label(data=onew,
              aes(label=c(paste(paste(day(date),month(date),":",sep="."),
-                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
+                               "(",round(lwr),"<",round(ydata),"<",round(upr),")"
 
                                )
                          )
@@ -252,29 +267,29 @@ if (!is.null(opts$logscale)){
 ###############q
 ## ENGLISH PLOT
 
-en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
+en_myplot = ggplot(dfx, aes(x=day, y=ydata)) +
   ggtitle(paste("Prognosis of COVID19 diagnoses in",opts$enLabel,opts$titleextra),
           subtitle="github.com/psteinb/covid19-curve-your-city") +
-  xlab("Day of Record") + ylab("# Diagnosed Cases") +
+  xlab("Day of Record") + ylab(paste("# of",opts$column,"Cases")) +
   xlim(0,onew$day) +
   geom_ribbon(aes(ymin = lwr, ymax = upr), fill = "grey70") +
   geom_line(color="red",
             linewidth=6) +
   geom_point(aes(
     x=day,
-    y=diagnosed
+    y=ydata
   ),data=df) +
   ############### LABEL TOMORROW ################
   annotate("segment",
            x = tmr$day[1]-3, xend = tmr$day[1],
-           y = tmr$diagnosed[1],
-           yend = tmr$diagnosed[1],
+           y = tmr$ydata[1],
+           yend = tmr$ydata[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm"))) +
 
   geom_label(data=tmr,
              aes(label=c(paste(paste(month(date),"/",day(date),":",sep=""),
-                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
+                               "(",round(lwr),"<",round(ydata),"<",round(upr),")"
 
                                )
                          )
@@ -286,8 +301,8 @@ en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
   ############### LABEL 1 WEEK FROM NOW ################
   annotate("segment",
            x = onew$day[1]-5, xend = onew$day[1],
-           y = onew$diagnosed[1],
-           yend = onew$diagnosed[1],
+           y = onew$ydata[1],
+           yend = onew$ydata[1],
            colour = "red",
            arrow = arrow(length = unit(2, "mm")),
            arrow.fill = "red"
@@ -295,7 +310,7 @@ en_myplot = ggplot(dfx, aes(x=day, y=diagnosed)) +
 
   geom_label(data=onew,
              aes(label=c(paste(paste(month(date),"/",day(date),":",sep=""),
-                               "(",round(lwr),"<",round(diagnosed),"<",round(upr),")"
+                               "(",round(lwr),"<",round(ydata),"<",round(upr),")"
 
                                )
                          )
@@ -377,17 +392,17 @@ if (!is.null(opts$logscale)){
 }
 
 ## For the statistics fans
-chi2 = sum(df$diagnosed_residuals**2)/sd(df$diagnosed_residuals)**2
+chi2 = sum(df$ydata_residuals**2)/sd(df$ydata_residuals)**2
 cat(">> ndf=", nrow(df) - 2 -1,"chi2:", chi2,"\n")
 chi2_ndf = chi2/(nrow(df) - 2 -1)
 
-resids = ggplot(df, aes(diagnosed_residuals)) +
+resids = ggplot(df, aes(ydata_residuals)) +
   geom_histogram() +
   ggtitle("Residuals of the exponential fit",
           subtitle = sprintf("mean: %2.2f, med: %2.2f, std: %2.2f, chi2/ndf: %2.3f",
-                             mean(df$diagnosed_residuals),
-                             median(df$diagnosed_residuals),
-                             sd(df$diagnosed_residuals),
+                             mean(df$ydata_residuals),
+                             median(df$ydata_residuals),
+                             sd(df$ydata_residuals),
                              chi2_ndf
                            )) +
   xlab("Residuals: X - predicted(X)") + ylab("N") +
