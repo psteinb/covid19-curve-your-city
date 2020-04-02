@@ -2,8 +2,8 @@ library(ggplot2)
 library(dplyr, warn.conflicts=FALSE)
 library(readr)
 library(optparse)
-library(cowplot)
-library(lubridate)
+library(cowplot, warn.conflicts=FALSE)
+library(lubridate, warn.conflicts=FALSE)
 library(nls2)
 
 ## DEFINING COMMAND LINE INTERFACE
@@ -36,7 +36,7 @@ option_list <- list(
               default='[dresden.de]',
               help='add this to the title [default %default]'),
 
-  make_option(c('-L','--logscale'),
+  make_option(c('-L','--onlylinear'),
               action="store_true",
               default=FALSE,
               help='include a logscale plot in a second column [default %default]')
@@ -79,7 +79,11 @@ df$day = as.integer(df$date - df$date[1])
 df
 
 print(">>nls<<: ydata ~ a*(1+b)**(day)")
-model.expon = nls(ydata ~ a*(1+b)**(day),
+exponf = function(day, a, b){
+  return(a*(1+b)**(day))
+}
+form = ydata ~ a*(1+b)**(day)
+model.expon = nls(form,
                   data=df,
                   start = list(a = 1, b = 0.33)
                   )
@@ -90,56 +94,73 @@ summary(model.expon)
 #   the potential susceptible-infectious contacts lead to new infections per day.
 #b: quantifying the number of infected people that cease to take part
 #   in the transmission process per day.
-print(">>nls<<: ydata ~ a*exp(b*day)")
-model.sired = nls(ydata ~ a*exp(b*day),
+print(">>nls<<: ydata ~ a*exp(b*day) + c")
+siredf = function(day,a,b,c){
+  return(a*exp(b*day) + c)
+}
+form = ydata ~ a*exp(b*day) + c
+model.sired = nls(form,
                   data=df,
-                  start = list(a = 10, b = 0.33)
+                  start = list(a = 10,
+                               b = 0.33,
+                               c = 0
+                               )
                   )
 summary(model.sired)
-
-
-## creating the error bands
-upr.a = summary(model.expon)$coefficients[1,1] + summary(model.expon)$coefficients[1,2]
-upr.b = summary(model.expon)$coefficients[2,1] + summary(model.expon)$coefficients[2,2]
-lwr.a = summary(model.expon)$coefficients[1,1] - summary(model.expon)$coefficients[1,2]
-lwr.b = summary(model.expon)$coefficients[2,1] - summary(model.expon)$coefficients[2,2]
-
-supr.a = summary(model.sired)$coefficients[1,1] + summary(model.sired)$coefficients[1,2]
-supr.b = summary(model.sired)$coefficients[2,1] + summary(model.sired)$coefficients[2,2]
-slwr.a = summary(model.sired)$coefficients[1,1] - summary(model.sired)$coefficients[1,2]
-slwr.b = summary(model.sired)$coefficients[2,1] - summary(model.sired)$coefficients[2,2]
 
 ##############
 ## GERMAN PLOT
 offset_1d = 1
 offset_1w = 7
 
-dfx = data.frame(day=0:(nrow(df)+offset_1w))
-dfx$ydata = predict(model.expon,
-                        list(day=dfx$day),
-                        se.fit = T)
+last_day = df$day[length(df$day)]
+dfx = data.frame(day=seq(0,(last_day+offset_1w), by=1))
 
-df$ydata_residuals = residuals(model.expon)
 
-dfx$ydata_sir = predict(model.sired,
-                        list(day=dfx$day),
-                        se.fit = T)
+## the fitted parameters
+value.a = summary(model.sired)$coefficients[1,1]
+value.b = summary(model.sired)$coefficients[2,1]
+value.c = summary(model.sired)$coefficients[3,1]
 
-dfx$upr = upr.a*(1+upr.b)**(dfx$day)
-dfx$lwr = lwr.a*(1+lwr.b)**(dfx$day)
+
+## the fitted parameter uncertainties
+unc.a = summary(model.sired)$coefficients[1,2]
+unc.b = summary(model.sired)$coefficients[2,2]
+unc.c = summary(model.sired)$coefficients[3,2]
+
+
+dfx$ydata = predict(model.sired,
+                    list(day=dfx$day),
+                    se.fit = T)
+
+
+df$ydata_residuals = residuals(model.sired)
+
+dfx$upr = siredf(dfx$day,
+                 value.a + unc.a,
+                 value.b + unc.b,
+                 value.c + unc.c
+                 )
+
+dfx$lwr = siredf(dfx$day,
+                 value.a - unc.a,
+                 value.b - unc.b,
+                 value.c - unc.c
+                 )
 
 
 dfx$date = df$date[1] + dfx$day
 
 dfx
 
-print("tomorrow")
-td = today()
-tmr = dfx %>% filter(day == nrow(df))
+sprintf("tomorrow, day %i",last_day+1)
+#td = today()
+
+tmr = dfx %>% filter(day == last_day+1)
 tmr
 
-print("1 week from now")
-onew = dfx %>% filter(day == (df$day[nrow(df)]+offset_1w))
+sprintf("1 week from now, day %i",last_day+offset_1w)
+onew = dfx %>% filter(day == (last_day+offset_1w))
 onew
 
 
@@ -200,7 +221,7 @@ myplot = ggplot(dfx, aes(x=day, y=ydata)) +
 output_name = paste("de",opts$output,sep="_")
 
 ##
-if (!is.null(opts$logscale)){
+if (!opts$onlylinear){
 
   print("plotting linear and log scale")
 
