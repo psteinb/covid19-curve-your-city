@@ -1,20 +1,44 @@
 # Extrapolierte COVID19-Infektionen
 
-## Dresden 
+## COVID19 Im Krankenhaus / Hospitalized
 
-### COVID19-Diagnosen / Diagnoses
-
-![](de_plus7_diagnosed.png)
-![](en_plus7_diagnosed.png)
+![](de_de_dresden_www_hospitalized.png)
+![](en_de_dresden_www_hospitalized.png)
 
 Datenquelle/data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
 
-### COVID19 Im Krankenhaus / Hospitalized
 
-![](de_plus7_hospitalized.png)
-![](en_plus7_hospitalized.png)
+## COVID19-Diagnosen / Diagnoses
+
+### Dresden
+
+![](de_de_dresden_www_diagnosed.png)
+![](en_de_dresden_www_diagnosed.png)
 
 Datenquelle/data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
+
+
+### Leipzig
+
+![](de_de_leipzig_sms_diagnosed.png)
+![](en_de_leipzig_sms_diagnosed.png)
+
+Datenquelle/data source: [SMS by @dgerber](https://danielgerber.eu/2020/03/22/corona-zahlen-in-sachsen/)
+
+### Chemnitz
+
+![](de_de_chemnitz_sms_diagnosed.png)
+![](en_de_chemnitz_sms_diagnosed.png)
+
+Datenquelle/data source: [SMS by @dgerber](https://danielgerber.eu/2020/03/22/corona-zahlen-in-sachsen/)
+
+### Sachsen
+
+![](de_de_sachsen_sms_diagnosed.png)
+![](en_de_sachsen_sms_diagnosed.png)
+
+Datenquelle/data source: [SMS by @dgerber](https://danielgerber.eu/2020/03/22/corona-zahlen-in-sachsen/)
+
 
 
 ## Statistik
@@ -83,9 +107,16 @@ $ Rscript exponential.R -i de_dresden.csv
 
 My fit uses a simple exponential function. It is important to have a look at the residuals.
 
-![](residuals_plus7_diagnosed.png)
-![](residuals_plus7_hospitalized.png)
+![](residuals_de_dresden_www_hospitalized.png)
+
+![](residuals_de_leipzig_sms_diagnosed.png)
+![](residuals_de_chemnitz_sms_diagnosed.png)
+![](residuals_de_sachsen_sms_diagnosed.png)
 
 The `nls` fit that I use, assumes that the data follows a Gaussian around the predicted values. The above plot looks like a very wide spread Gaussian. On top, there is a strong tendency towards positive values.
 
 The plot above lists a parameter by the name `chi2/ndf`, if this is close to `1`, then the fit can be considered good. For more details, see the [wikipedia page on errors and residuals](https://en.wikipedia.org/wiki/Errors_and_residuals).
+
+### Uncertainties
+
+As I am using the standard uncertainties for all parameters from `nls` in R, these are 1 standard deviation uncertainties directly obtained from the square root of diagonal elements of the covariance matrix.
