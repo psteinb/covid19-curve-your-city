@@ -18,20 +18,6 @@ Datenquelle/data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit
 Datenquelle/data source: [dresden.de](https://www.dresden.de/de/leben/gesundheit/hygiene/infektionsschutz/corona.php)
 
 
-### Leipzig
-
-![](de_de_leipzig_sms_diagnosed.png)
-![](en_de_leipzig_sms_diagnosed.png)
-
-Datenquelle/data source: [SMS by @dgerber](https://danielgerber.eu/2020/03/22/corona-zahlen-in-sachsen/)
-
-### Chemnitz
-
-![](de_de_chemnitz_sms_diagnosed.png)
-![](en_de_chemnitz_sms_diagnosed.png)
-
-Datenquelle/data source: [SMS by @dgerber](https://danielgerber.eu/2020/03/22/corona-zahlen-in-sachsen/)
-
 ### Sachsen
 
 ![](de_de_sachsen_sms_diagnosed.png)
@@ -105,12 +91,10 @@ $ Rscript exponential.R -i de_dresden.csv
 
 ### Residuals
 
-My fit uses a simple exponential function. It is important to have a look at the residuals.
+My fit uses a simple exponential function. It is important to have a look at the residuals according to the same ordering as above.
 
 ![](residuals_de_dresden_www_hospitalized.png)
-
-![](residuals_de_leipzig_sms_diagnosed.png)
-![](residuals_de_chemnitz_sms_diagnosed.png)
+![](residuals_de_dresden_www_diagnosed.png)
 ![](residuals_de_sachsen_sms_diagnosed.png)
 
 The `nls` fit that I use, assumes that the data follows a Gaussian around the predicted values. The above plot looks like a very wide spread Gaussian. On top, there is a strong tendency towards positive values.
