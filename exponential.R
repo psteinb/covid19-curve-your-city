@@ -36,7 +36,7 @@ option_list <- list(
               default='[dresden.de]',
               help='add this to the title [default %default]'),
 
-  make_option(c('-L','--logscale'),
+  make_option(c('-L','--onlylinear'),
               action="store_true",
               default=FALSE,
               help='include a logscale plot in a second column [default %default]')
@@ -221,7 +221,7 @@ myplot = ggplot(dfx, aes(x=day, y=ydata)) +
 output_name = paste("de",opts$output,sep="_")
 
 ##
-if (!is.null(opts$logscale)){
+if (!opts$onlylinear){
 
   print("plotting linear and log scale")
 
