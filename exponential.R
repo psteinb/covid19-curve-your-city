@@ -349,7 +349,7 @@ en_myplot = ggplot(dfx, aes(x=day, y=ydata)) +
 output_name = paste("en",opts$output,sep="_")
 
 ##
-if (!is.null(opts$logscale)){
+if (!opts$onlylinear){
 
   print("plotting linear and log scale [EN]")
 
