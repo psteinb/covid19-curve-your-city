@@ -6,7 +6,8 @@ name: Data Provider
 # schedule event for wee past 12 in Germany, so 10 UTC in summer time
 on:
   schedule:
-    - cron: "10 10 * * *"
+    - cron: "10 10 * * 1-5" # Mo–Fr 10:10
+    - cron: "10 11 * * 6,0" # Sa,Su 11:10
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
