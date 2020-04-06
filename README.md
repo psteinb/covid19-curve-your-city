@@ -1,5 +1,17 @@
 # Extrapolierte COVID19-Infektionen
 
+## Warum machst du das? / Why are you doing this?
+
+Ich bin kein Virologe noch ein Epidemiologe. Ich bin langjähriger [HPC](https://de.wikipedia.org/wiki/Supercomputer)-Nutzer, [Research Software Engineer](https://en.wikipedia.org/wiki/Research_software_engineering), Datenwissenschaftler und Machine-Learning-Praktiker.
+
+Ich habe dieses Projekt ins Leben gerufen, um mit meinen mentalen Mitteln die Pandemie und den Virus zu verstehen und vielleicht ein Beitrag bei der Wissensvermittlung zu leisten.
+
+---
+
+I am no virologist and no epidemioligist. I am a seasoned [HPC](https://en.wikipedia.org/wiki/Supercomputer) user, [Research Software Engineer](https://en.wikipedia.org/wiki/Research_software_engineering), data scientist and machine learner practitioner. 
+
+I created this project, to try to understand the SARS-COV-2 virus and the pandemic with my mental tools. I hope to potentially contribute to the communication of knowledge and results.
+
 ## COVID19 Im Krankenhaus / Hospitalized
 
 ![](de_de_dresden_www_hospitalized.png)
