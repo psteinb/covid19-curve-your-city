@@ -5,10 +5,9 @@ library(readr)
 library(optparse)
 library(cowplot, warn.conflicts=FALSE)
 library(lubridate, warn.conflicts=FALSE)
-library(nls2)
 
 ## DEFINING COMMAND LINE INTERFACE
-parser <- OptionParser(## description='process COVID19 data'
+parser <- OptionParser(description='fit COVID19 data with an exponential model'
 )
 option_list <- list(
   make_option(c('-i','--input'),

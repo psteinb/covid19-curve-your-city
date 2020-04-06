@@ -1,5 +1,36 @@
 # Extrapolierte COVID19-Infektionen
 
+## Warum machst du das? / Why are you doing this?
+
+Ich bin kein Virologe noch ein Epidemiologe. Ich bin langjähriger [HPC](https://de.wikipedia.org/wiki/Supercomputer)-Nutzer, [Research Software Engineer](https://en.wikipedia.org/wiki/Research_software_engineering), Datenwissenschaftler und Machine-Learning-Praktiker.
+
+Ich habe dieses Projekt ins Leben gerufen, um mit meinen mentalen Mitteln die Pandemie und den Virus zu verstehen und vielleicht ein Beitrag bei der Wissensvermittlung zu leisten.
+
+---
+
+I am no virologist and no epidemioligist. I am a seasoned [HPC](https://en.wikipedia.org/wiki/Supercomputer) user, [Research Software Engineer](https://en.wikipedia.org/wiki/Research_software_engineering), data scientist and machine learner practitioner. 
+
+I created this project, to try to understand the SARS-COV-2 virus and the pandemic with my mental tools. I hope to potentially contribute to the communication of knowledge and results.
+
+# Exponentielles Modell / Exponential Model
+
+Die folgenden Grafiken versuchen ein exponentielles Modell an die Daten für Dresden anzupassen (techn. zu fitten). Diesem Modell liegen einige Annahmen zugrunde:
+
+- die Zahl der für den Virus empfänglichen Personen ist unbegrenzt
+- die Genesungsrate ist verschwindend klein oder `0`
+
+Vgl. auch [lernapparat.de/epidemiologie-sir](http://lernapparat.de/epidemiologie-sir/) für eine tiefere Diskussion. Die Daten zeigen, dass diese Annahmen zunehmend in der Wirklichkeit verletzt werden und damit der Fit mit einem exponentiellen Modell schrittweise seine Aussagekraft mehr hat.
+
+---
+
+The following plots try to fit an exponential model to the data of Dresden, Germany. This model has several assumptions underlying such as:
+
+- the number of susceptible persons is unlimited
+- the rate of recovery is `0` or vanishingly small
+
+See also [lernapparat.de/epidemiology-sir](http://lernapparat.de/epidemiology-sir/) for in-depth discussion. The data shows that these assumptions are increasingly violated by reality and therefor the fit with an exponential model looses any basis for interpretation.
+
+
 ## COVID19 Im Krankenhaus / Hospitalized
 
 ![](de_de_dresden_www_hospitalized.png)
@@ -58,14 +89,14 @@ Here `a` and `b` are free parameters.
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate","nls2"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate"))
 > quit(save="default",status=0,runLast=TRUE)
 ```
 
 3. `exponential.R`-Script laufen lassen
 
 ``` shell
-$ Rscript exponential.R -i de_dresden.csv
+$ Rscript exponential.R -i data/de_dresden_www.csv
 ```
 
 4. Dies produziert drei Dateien `de_plus7.png`, `en_plus7.png` und `residuals_plus7.png`, die die Plots basierend auf `data/de_dresden_www.csv` beinhalten.
@@ -77,7 +108,7 @@ $ Rscript exponential.R -i de_dresden.csv
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate","nls2"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate"))
 > quit(save="default",status=0,runLast=TRUE)
 ```
 
