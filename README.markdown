@@ -54,11 +54,12 @@ Here `a` and `b` are free parameters.
 ## German
 
 1. [R installieren](https://www.r-project.org)
-2. Abhängigkeiten installieren
+2. Abhängigkeiten interaktiv installieren
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate","nls2"))
+> quit(save="default",status=0,runLast=TRUE)
 ```
 
 3. `exponential.R`-Script laufen lassen
@@ -67,16 +68,17 @@ $ R
 $ Rscript exponential.R -i de_dresden.csv
 ```
 
-4. Dies produziert zwei Dateien `de_plus7.png` und `en_plus7.png`.
+4. Dies produziert drei Dateien `de_plus7.png`, `en_plus7.png` und `residuals_plus7.png`, die die Plots basierend auf `data/de_dresden_www.csv` beinhalten.
 
 ## English
 
 1. [install R](https://www.r-project.org)
-2. install dependencies
+2. install dependencies interactively
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate","nls2"))
+> quit(save="default",status=0,runLast=TRUE)
 ```
 
 3. run `exponential.R` script
@@ -85,7 +87,7 @@ $ R
 $ Rscript exponential.R -i de_dresden.csv
 ```
 
-4. this produces 2 files: `de_plus7.png` and `en_plus7.png` that contain the plots based on `de_dresden.csv`
+4. this produces 3 files: `de_plus7.png`, `en_plus7.png` and `residuals_plus7.png` that contain the plots based on `data/de_dresden_www.csv`
 
 ## For Statistics Fans
 
