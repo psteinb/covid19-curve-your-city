@@ -81,9 +81,9 @@ test "$noquery" = "true" && { printf "ommiting web requets."; } || {
 
 # alternative tool would be e.g. wget
 # here call is silent, without checks on certificates and with custom user agent (browser name/version etc.)
-#~ curl -s -k -A "$a" "$url1" 2>&1 1>/dev/null
+curl -s -k -A "$a" "$url1" 2>&1 1>/dev/null
 # wait a moment to not trigger some protection on server side
-#~ sleep 1 # although this doesnt seem to be necessarry at all
+sleep 1 # although this doesnt seem to be necessarry at all
 # write actual content to file $fn
 curl -s -o "$jsonfn" -k -A "$a" "$url2"
 
