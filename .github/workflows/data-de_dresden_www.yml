@@ -6,8 +6,8 @@ name: Data Provider
 # schedule event for wee past 12 in Germany, so 10 UTC in summer time
 on:
   schedule:
-    - cron: "10 10 * * 1-5" # Mo–Fr 10:10
-    - cron: "10 11 * * 6,0" # Sa,Su 11:10
+    - cron: "25 12 * * 1-5" # Mo–Fr 12:25
+    - cron: "25 13 * * 6,0" # Sa,Su 13:25
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -53,6 +53,8 @@ jobs:
       uses: EndBug/add-and-commit@v4.0.1
       with:
         add: data/de_dresden_www.csv
+        add: data/de_dresden_www.json
+        add: data/now.csv
 #        author_name: ci-script
 #        author_email: ci-script@users.noreply.github.com
 
