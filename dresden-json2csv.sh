@@ -47,7 +47,7 @@ done
 #~ defaultentrytod="12:00"
 #~ jsonquery="'.features[] .attributes | { Datum, Fallzahl, Sterbefall, Genesungsfall, Hospitalisierung }'"
 
-test -z "$configfn" && { configfn="data.config"; }
+test -z "$configfn" && configfn="data.config"
 
 # for calling existing file, fallback test case
 test -z "$jsonfn" && jsonfn="data/de_dresden_www.json"
@@ -55,14 +55,15 @@ test -z "$jsonfn" && jsonfn="data/de_dresden_www.json"
 
 # user agent
 a=$(cat "$configfn" | grep -i "^useragent="|head -1|cut -d= -f2-|cut -d'"' -f2)
-test -z "$a" && a="Mozilla/5.0 (X11; Linux x86_64; rv:74.0) Gecko/20100101 Firefox/74.0"
+test -z "$a" && a="Mozilla/5.0 (X11; Linux x86_64; rv:82.0) Gecko/20100101 Firefox/82.0"
 
 # 1st request
 url1=$(cat "$configfn" | grep -i "^query1="|head -1|cut -d= -f2-|cut -d'"' -f2)
 test -z "$url1" && url1="https://services.arcgis.com/ORpvigFPJUhb8RDF/arcgis/rest/services/corona_DD_3/FeatureServer/0/query?f=json&where=Anzeige_Indikator%3D%27x%27&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&resultOffset=0&resultRecordCount=50&cacheHint=true"
 # 2nd request, needs 1st request, otherwise satus code 400
 url2=$(cat "$configfn" | grep -i "^query2="|head -1|cut -d= -f2-|cut -d'"' -f2)
-test -z "$url2" && url2="https://services.arcgis.com/ORpvigFPJUhb8RDF/arcgis/rest/services/corona_DD_3/FeatureServer/0/query?f=json&where=Fallzahl%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&resultOffset=0&resultRecordCount=2000&cacheHint=true"
+test -z "$url2" && url2="https://services.arcgis.com/ORpvigFPJUhb8RDF/arcgis/rest/services/corona_DD_7_Sicht/FeatureServer/0/query?f=json&where=Fallzahl%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Datum_neu%20asc&resultOffset=0&resultRecordCount=2000&resultType=standard"
+#"https://services.arcgis.com/ORpvigFPJUhb8RDF/arcgis/rest/services/corona_DD_3/FeatureServer/0/query?f=json&where=Fallzahl%20IS%20NOT%20NULL&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&resultOffset=0&resultRecordCount=2000&cacheHint=true"
 
 test -z "$csvheader" && { csvheader=$(cat "$configfn" | grep -i "^csvheader="|head -1|cut -d= -f2-|cut -d'"' -f2); }
 
@@ -100,7 +101,7 @@ test -z "$ts" || { path=$(printf "$csvfn"|rev|cut -d"/" -f2-|rev); csvfn=$(print
 test "$(printf "$jsonfn\n"|rev|cut -d. -f1|rev)" = "json" && {
 
 # head line as found in csv of the repo
-1>"$csvfn" printf "$csvheader\n"
+#~ 1>"$csvfn" printf "$csvheader\n"
 
 # following values are assumed constant
 # standard values for place and time
@@ -109,8 +110,10 @@ p=$(cat "$configfn" | grep -i "defaultentryplace="|head -1|cut -d= -f2-|cut -d'"
 c=$(cat "$configfn" | grep -i "defaultentrytod="|head -1|cut -d= -f2-|cut -d'"' -f2)
 
 # process lines (each day) of the files, filter json with `jq`
-for i in $(cat $jsonfn | jq -c '.features[] .attributes | { Datum, Fallzahl, Sterbefall, Genesungsfall, Hospitalisierung }');
-do
+#~ for i in $(cat $jsonfn | jq -c '.features[] .attributes | { Datum, Fallzahl, Sterbefall, Genesungsfall, Hospitalisierung }');
+#~ do
+# or last line only
+i=$(cat $jsonfn | jq -c '.features[] .attributes | { Datum, Fallzahl, Sterbefall, Genesungsfall, Hospitalisierung }'|tail -1)
 	# numbers, may need fix in case NAN
 	# n: number of cases
 	n=$(printf "$i"|cut -d} -f1|cut -d, -f2|cut -d: -f2); test "$n" = "null" && n="0"
@@ -132,12 +135,17 @@ do
 	# fix year to 4 digits
 	test "$y" -lt "100" && y=$(( 2000 + $y ));
 
+	lastline=$(tail -1 "$csvfn")
+	#~ lastdate=$(echo "$lastline"|cut -d"," -f2)
 	# output for csv
 	# including more numbers
-	1>>"$csvfn" printf "%s,%04d-%02d-%02d,%s,%s,%s,%s,%s\n" "$p" "$y" "$m" "$d" "$c" "$n" "$b" "$r" "$h"
+	nextline=$(printf "%s,%04d-%02d-%02d,%s,%s,%s,%s,%s\n" "$p" "$y" "$m" "$d" "$c" "$n" "$b" "$r" "$h"|tail -1)
+	nextdate=$(echo "$nextline"|cut -d"," -f2)
+	test "$lastline" != "$nextline" && 1>>"$csvfn" printf "$nextline"
+	1>>$(echo "$csvfn"|rev|cut -d"/" -f2-|rev)"/now.csv" printf "$nextline"
 	# csv as used by R script, number infected only
 	#~ 1>>"$csvfn" printf "%s,%04d-%02d-%02d,%s,%s\n" "$p" "$y" "$m" "$d" "$c" "$n"
 
-done
+#~ done
 	
 }
