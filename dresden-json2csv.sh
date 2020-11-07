@@ -141,8 +141,8 @@ i=$(cat $jsonfn | jq -c '.features[] .attributes | { Datum, Fallzahl, Sterbefall
 	# including more numbers
 	nextline=$(printf "%s,%04d-%02d-%02d,%s,%s,%s,%s,%s\n" "$p" "$y" "$m" "$d" "$c" "$n" "$b" "$r" "$h"|tail -1)
 	nextdate=$(echo "$nextline"|cut -d"," -f2)
-	test "$lastline" != "$nextline" && 1>>"$csvfn" printf "$nextline"
-	1>>$(echo "$csvfn"|rev|cut -d"/" -f2-|rev)"/now.csv" printf "$nextline"
+	test "$lastline" != "$nextline" && 1>>"$csvfn" printf "%s\n" "$nextline"
+	1>$(echo "$csvfn"|rev|cut -d"/" -f2-|rev)"/now.csv" printf "%s\n" "$nextline"
 	# csv as used by R script, number infected only
 	#~ 1>>"$csvfn" printf "%s,%04d-%02d-%02d,%s,%s\n" "$p" "$y" "$m" "$d" "$c" "$n"
 

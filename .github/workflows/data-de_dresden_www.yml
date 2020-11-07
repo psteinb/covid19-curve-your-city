@@ -52,11 +52,9 @@ jobs:
         printf "done.\n" 
 
     - name: Add & Commit
-      uses: EndBug/add-and-commit@v4.0.1
+      uses: EndBug/add-and-commit@v5
       with:
-        add: data/de_dresden_www.csv
-        add: data/de_dresden_www.json
-        add: data/now.csv
+        add: "data/de_dresden_www.csv data/de_dresden_www.json data/now.csv"
 #        author_name: ci-script
 #        author_email: ci-script@users.noreply.github.com
 
