@@ -24,6 +24,10 @@ option_list <- list(
               default='diagnosed',
               help='column in .csv input to plot [default %default]'),
 
+  make_option(c('-s','--startdate'),
+              default='1970-01-01',
+              help='when to start the data at [default %default]'),
+
   make_option(c('-d','--deLabel'),
               default='Dresden',
               help='the name of the region under investigation in German [default %default]'),
@@ -61,7 +65,7 @@ mytheme = theme_bw(base_size=20)##  + theme(
     ## plot.title=element_text(size=18,face="bold")
 ## )
 
-## THE MODEL TO FIT
+
 
 df = read.csv(opts$input)
 
@@ -74,20 +78,36 @@ if (colid > 0){
        call.=FALSE)
 }
 
-df$date = as.Date(df$date)
-df$day = as.integer(df$date - df$date[1])
-df
 
-print(">>nls<<: ydata ~ a*(1+b)**(day)")
-exponf = function(day, a, b){
-  return(a*(1+b)**(day))
+
+df$date = as.Date(df$date)
+
+firstday = ymd(df$date[1])
+starthere = ymd(opts$startdate)
+
+if (starthere > firstday){
+  df = df %>% filter(date > starthere)
+  print(cat("starting on", starthere, "instead of", firstday, "\n"))
 }
-form = ydata ~ a*(1+b)**(day)
-model.expon = nls(form,
-                  data=df,
-                  start = list(a = 1, b = 0.33)
-                  )
-summary(model.expon)
+
+df$day = as.integer(df$date - df$date[1])
+
+glimpse(df)
+
+## THE MODEL TO FIT
+
+## a simple fit to start with
+## print(">>nls<<: ydata ~ a*(1+b)**(day)")
+## exponf = function(day, a, b){
+##   return(a*(1+b)**(day))
+## }
+## form = ydata ~ a*(1+b)**(day)
+## model.expon = nls(form,
+##                   data=df,
+##                   start = list(a = df$diagnosed[1],
+##                                b = 0.33)
+##                   )
+## summary(model.expon)
 
 #based on http://rocs.hu-berlin.de/corona/docs/forecast/model/
 #a: is the reproduction rate of the process which quantifies how many of
@@ -99,12 +119,18 @@ siredf = function(day,a,b,c){
   return(a*exp(b*day) + c)
 }
 form = ydata ~ a*exp(b*day) + c
+
+##the nls fit is extremely sensitive to the initial vals
+##I found trial and error to help for now
+initvals = list(a = 1.,
+                b = 0.2,
+                c = df$diagnosed[1]
+                )
+initvals
 model.sired = nls(form,
                   data=df,
-                  start = list(a = 10,
-                               b = 0.33,
-                               c = 0
-                               )
+                  start = initvals,
+                  control = nls.control(maxiter = 1000)
                   )
 summary(model.sired)
 
@@ -147,7 +173,6 @@ dfx$lwr = siredf(dfx$day,
                  value.b - unc.b,
                  value.c - unc.c
                  )
-
 
 dfx$date = df$date[1] + dfx$day
 
