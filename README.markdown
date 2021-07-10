@@ -89,7 +89,7 @@ Here `a` and `b` are free parameters.
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate", "vctrs"))
 > quit(save="default",status=0,runLast=TRUE)
 ```
 
@@ -108,7 +108,7 @@ $ Rscript exponential.R -i data/de_dresden_www.csv
 
 ``` shell
 $ R
-> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate"))
+> install.packages(c("ggplot2","dplyr","readr","optparse", "cowplot","lubridate", "vctrs"))
 > quit(save="default",status=0,runLast=TRUE)
 ```
 
