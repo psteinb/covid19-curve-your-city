@@ -19,7 +19,7 @@ myplot = ggplot(df, aes(x, y)) +
               data = df,
               se = FALSE)
 
-ggsave("ref.png",myplot)
+ggsave("ref-r.png",myplot)
 
 ## We "noise" to the data by drawing from a normal distribution
 ## with mean 1 and standard deviated 0.2 and multiplying all data
@@ -61,4 +61,4 @@ myplot = ggplot(df, aes(x, ny)) +
   ggtitle("synthetic infections") +
   geom_line(aes(y=fitted(fit)), color="red") +
   geom_linerange(aes(ymin = nyres_min, ymax = nyres_max), color="blue")
-ggsave("nref.png",myplot)
+ggsave("nref-r.png",myplot)
